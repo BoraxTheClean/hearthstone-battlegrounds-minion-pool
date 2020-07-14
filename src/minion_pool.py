@@ -37,12 +37,16 @@ class MinionPool(MinionPoolInterface):
                     print(self.QUANTITIES_PER_TIER[tier])
                     pool[tier].extend([unit] * self.QUANTITIES_PER_TIER[tier])
                     print(pool[tier])
-        
+
         print("SIzes:")
         sizes = [len(pool[0]),len(pool[1]),len(pool[2]),len(pool[3]),len(pool[4]),len(pool[5])]
         print(sizes)
 
         return pool
+
+    def put_batch_of_minions_back_in_pool(self,minions):
+        for minion in minions:
+            put_minion_back_in_pool(minion)
 
     def put_minion_back_in_pool(self,minion):
         tier = int(minion[0])
@@ -50,7 +54,7 @@ class MinionPool(MinionPoolInterface):
             raise Exception("Invalid Tier")
 
         self.pool[tier-1].append(minion)
-        
+
     def size(self):
         size = 0
         for i in self.pool:
@@ -64,8 +68,18 @@ class MinionPool(MinionPoolInterface):
 
         random_ints = [randint(0,number_of_valid_minions) for i in range(batch_size)]
 
-        
+        minions_to_return = []
 
-        return []
+        for rand_int in random_ints:
+            current_tier = 0
+            while rand_int > len(self.pool[current_tier]) - 1:
+                current_tier = current_tier + 1
+
+            selected_minion = self.pool[current_tier][rand_int]
+
+            minions_to_return.append(selected_minion)
+
+            self.pool[current_tier].remove(selected_minion)
 
 
+        return minions_to_return
