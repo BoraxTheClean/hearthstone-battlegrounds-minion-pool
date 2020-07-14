@@ -1,6 +1,5 @@
 
-class MinionPool(object):
-
+class MinionPoolInterface(object):
     def __init__(self):
         '''
             A startig minion pool has the following quanities of units
@@ -13,7 +12,9 @@ class MinionPool(object):
         '''
         self.QUANTITIES_PER_TIER = [16,15,13,11,9,7]
 
-        self.UNITS_PER_TIER = {
+        self.TRIBES = ['Beasts','Murlocs','Mechs','Dragons','Demons','Pirates','Neutral']
+
+        self.UNITS_BY_TRIBE= {
             'Beasts': [
                 [
                     '1Alleycat','1Scavenging Hyena'
@@ -43,11 +44,8 @@ class MinionPool(object):
                     '2Murloc Warleader','2Old Murk-Eye'
                 ],
                 [
-                    '3Coldlight Seer'
-                ],
-                [
-                    '3Felfin Navigator'
-                ],
+                    '3Coldlight Seer','3Felfin Navigator'
+                ], 
                 [
                     '4Toxfin'
                 ],
@@ -98,7 +96,7 @@ class MinionPool(object):
                     '6Foe Reaper 4000',"6Kangor's Apprentice"
                 ],
             ],
-            'Dragon': [
+            'Dragons': [
                 [
                     '1Dragonspawn Lieutenant','1Red Whelp'
                 ],
@@ -118,7 +116,7 @@ class MinionPool(object):
                     '6Kalecgos, Arcane Aspect','6Nadina the Red'
                 ],
             ],
-            'Demon': [
+            'Demons': [
                 [
                     '1Fiendish Servant','1Vulgar Homunculus','1Wrath Weaver'
                 ],
@@ -159,3 +157,16 @@ class MinionPool(object):
                 ]
             ],
         }
+        self.pool = self.UNITS_BY_TRIBE
+    
+    def put_minion_back_in_pool(self,minion):
+        return
+        
+    def size(self):
+        return 0
+
+    def get_batch_of_minions(self,tavern_tier,batch_size):
+        return []
+
+
+
