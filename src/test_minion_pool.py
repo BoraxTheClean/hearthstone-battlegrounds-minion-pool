@@ -2,7 +2,8 @@ import pytest
 from minion_pool import MinionPool
 
 def test_initilization(excluded_tribe='Demons'):
-    global pool = MinionPool(excluded_tribe)
+    global pool 
+    pool = MinionPool(excluded_tribe)
     size_of_pools = [0]*6
     for tribe in pool.TRIBES:
         units = pool.UNITS_BY_TRIBE[tribe]
@@ -30,19 +31,21 @@ def test_full_flow():
 
         assert previous_pool_size - size == pool.size()
 
-        tier = str(tier)
-
         for minion in batch:
-            assert minion.startswith(tier)
+            print(minion)
+            minion_tier = int(minion[0])
+            assert minion_tier <= tier
 
         batches.append(batch)
 
     for b in batches:
         pool.put_batch_of_minions_back_in_pool(b)
 
-    def test_get_batch_for_speed(benchmark):
-        batch = pool.get_batch_of_minions(3,3)
+def test_get_batch_for_speed(benchmark):
+    benchmark(get_batch_for_speed_helper)
 
-        benchmark(pool.put_batch_of_minions_back_in_pool,batch)
 
-        benchmark(pool.get_batch_of_minions,3,3)
+def get_batch_for_speed_helper():
+    batch = pool.get_batch_of_minions(tavern_tier=1,batch_size=3)
+    pool.put_batch_of_minions_back_in_pool(batch)
+

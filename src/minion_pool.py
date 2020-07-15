@@ -31,22 +31,13 @@ class MinionPool(MinionPoolInterface):
             units = self.UNITS_BY_TRIBE[tribe] #List of lists. Each list contains units of the given tribe of the same tier.
             for tier in range(len(units)):
                 for unit in units[tier]:
-                    print(tribe)
-                    print(tier)
-                    print(unit)
-                    print(self.QUANTITIES_PER_TIER[tier])
                     pool[tier].extend([unit] * self.QUANTITIES_PER_TIER[tier])
-                    print(pool[tier])
-
-        print("SIzes:")
-        sizes = [len(pool[0]),len(pool[1]),len(pool[2]),len(pool[3]),len(pool[4]),len(pool[5])]
-        print(sizes)
 
         return pool
 
     def put_batch_of_minions_back_in_pool(self,minions):
         for minion in minions:
-            put_minion_back_in_pool(minion)
+            self.put_minion_back_in_pool(minion)
 
     def put_minion_back_in_pool(self,minion):
         tier = int(minion[0])
@@ -63,16 +54,21 @@ class MinionPool(MinionPoolInterface):
 
     def get_batch_of_minions(self,tavern_tier,batch_size):
         number_of_valid_minions = 0
-        for i in range(tavern_tier):
+        for i in range(tavern_tier-1):
             number_of_valid_minions+= len(self.pool[i])
 
         random_ints = [randint(0,number_of_valid_minions) for i in range(batch_size)]
 
         minions_to_return = []
 
+        print("Tier: "+str(tavern_tier))
+        print("Size: "+str(batch_size))
+        print("Random ints: "+str(random_ints))
+        
         for rand_int in random_ints:
             current_tier = 0
             while rand_int > len(self.pool[current_tier]) - 1:
+                rand_int = rand_int - len(self.pool[current_tier])
                 current_tier = current_tier + 1
 
             selected_minion = self.pool[current_tier][rand_int]
