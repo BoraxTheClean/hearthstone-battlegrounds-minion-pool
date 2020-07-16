@@ -38,7 +38,7 @@ class MinionPoolInterface(object):
             ],
             'Murlocs': [
                 [
-                    '1Murloc Tidecaller','1Murloc Tidecaller','1Rockpool Hunter'
+                    '1Murloc Tidecaller','1Murloc Tidehunter','1Rockpool Hunter'
                 ],
                 [
                     '2Murloc Warleader','2Old Murk-Eye'

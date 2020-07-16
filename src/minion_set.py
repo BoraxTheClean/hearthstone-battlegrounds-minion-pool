@@ -2,7 +2,7 @@ from random import randint
 from random import shuffle
 from interfaces.minion_pool_interface import MinionPoolInterface
 
-class MinionPool(MinionPoolInterface):
+class MinionSet(MinionPoolInterface):
 
     def __init__(self,excluded_tribe):
         if excluded_tribe == 'Neutral':
@@ -25,13 +25,20 @@ class MinionPool(MinionPoolInterface):
 
     def _generate_pool(self):
         #Initialize the pool with 6 empty buckets, one for each tier.
-        pool = [[] for i in range(6)]
+        pool = set()
 
         for tribe in self.TRIBES: # Pirates, Murlocs, etc...
             units = self.UNITS_BY_TRIBE[tribe] #List of lists. Each list contains units of the given tribe of the same tier.
             for tier in range(len(units)):
                 for unit in units[tier]:
-                    pool[tier].extend([unit] * self.QUANTITIES_PER_TIER[tier])
+                    for i in range(self.QUANTITIES_PER_TIER[tier]):
+                        size_before = len(pool)
+                        pool.add(unit+'-'+str(i))
+                        size_after = len(pool)
+
+                        if size_before == size_after:
+                            print(unit)
+                            print("Duplicate detected")
 
         return pool
 
@@ -40,44 +47,19 @@ class MinionPool(MinionPoolInterface):
             self.put_minion_back_in_pool(minion)
 
     def put_minion_back_in_pool(self,minion):
-        tier = int(minion[0])
-        if tier > 6 or tier < 1:
-            raise Exception("Invalid Tier")
-
-        self.pool[tier-1].append(minion)
+        self.pool.add(minion)
 
     def size(self):
-        size = 0
-        for i in self.pool:
-            size += len(i)
-        return size
+        return len(self.pool)
 
     def get_batch_of_minions(self,tavern_tier,batch_size):
-        number_of_valid_minions = 0
-        for i in range(tavern_tier-1):
-            number_of_valid_minions+= len(self.pool[i])
-            shuffle(self.pool[i])
-
-
-        random_ints = [randint(0,number_of_valid_minions) for i in range(batch_size)]
-
         minions_to_return = []
 
-        print("Tier: "+str(tavern_tier))
-        print("Size: "+str(batch_size))
-        print("Random ints: "+str(random_ints))
-        
-        for rand_int in random_ints:
-            current_tier = 0
-            while rand_int > len(self.pool[current_tier]) - 1:
-                rand_int = rand_int - len(self.pool[current_tier])
-                current_tier = current_tier + 1
-
-            selected_minion = self.pool[current_tier][rand_int]
-
-            minions_to_return.append(selected_minion)
-
-            self.pool[current_tier].remove(selected_minion)
-
+        while len(minions_to_return) != batch_size:
+            element = self.pool.pop()
+            if int(element[0]) <= tavern_tier:
+                minions_to_return.append(element)
+            else:
+                self.pool.add(element)
 
         return minions_to_return
