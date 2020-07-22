@@ -93,7 +93,13 @@ def full_game_test():
             minion_to_sell = minions.pop()
             pool.put_minion_back_in_pool(minion_to_sell)
 
-    for m in minions:
-        pool.put_minion_back_in_pool(minion_to_sell)
+        minions.append(pick)
+
+        pool.put_batch_of_minions_back_in_pool(batch)
+
+
+    pool.put_batch_of_minions_back_in_pool(minions)
+
+
 
 
