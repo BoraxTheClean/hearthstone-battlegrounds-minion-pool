@@ -43,11 +43,57 @@ def test_full_flow():
     for b in batches:
         pool.put_batch_of_minions_back_in_pool(b)
 
-def test_get_batch_for_speed_set(benchmark):
-    benchmark(get_batch_for_speed_helper)
+def test_benchmark_buy_sell_once(benchmark):
+    benchmark(buy_sell_helper)
 
-
-def get_batch_for_speed_helper():
-    batch = pool.get_batch_of_minions(tavern_tier=1,batch_size=3)
+def buy_sell_helper():
+    batch = pool.get_batch_of_minions(tavern_tier=4,batch_size=5)
     pool.put_batch_of_minions_back_in_pool(batch)
+
+
+def test_benchmark_buy_sell_each_tier(benchmark):
+    benchmark(test_buy_at_each_tier)
+
+
+def test_buy_at_each_tier():
+    tiers = [1,2,3,4,5,6]
+    sizes = [3,4,4,5,5,6]
+
+    batches = []
+
+    for index in range(6):
+        size = sizes[index]
+        tier = tiers[index]
+        batch = pool.get_batch_of_minions(tavern_tier=tier,batch_size=size)
+
+
+        batches.append(batch)
+
+    for b in batches:
+        pool.put_batch_of_minions_back_in_pool(b)
+
+def test_benchmark_full_game(benchmark):
+    benchmark(full_game_test)
+
+def full_game_test():
+    minions = []
+
+    tiers = [1] * 2 + [2] * 3 + [3] * 4 + [4] * 4 + [5] * 6 + [6] * 8
+    sizes = [3] * 2 + [4] * 3 + [4] * 4 + [5] * 4 + [5] * 6 + [6] * 8
+
+    for index in range(6):
+        size = sizes[index]
+        tier = tiers[index]
+        batch = pool.get_batch_of_minions(tavern_tier=tier,batch_size=size)
+
+        pick = batch[0]
+        batch.remove(pick)
+
+        if len(minions) == 7:
+            minion_to_sell = minions.pop()
+            pool.put_minion_back_in_pool(minion_to_sell)
+
+    for m in minions:
+        pool.put_minion_back_in_pool(minion_to_sell)
+
 

@@ -1,5 +1,4 @@
 from random import randint
-from random import shuffle
 from interfaces.minion_pool_interface import MinionPoolInterface
 
 class MinionPool(MinionPoolInterface):
@@ -56,7 +55,6 @@ class MinionPool(MinionPoolInterface):
         number_of_valid_minions = 0
         for i in range(tavern_tier-1):
             number_of_valid_minions+= len(self.pool[i])
-            shuffle(self.pool[i])
 
 
         random_ints = [randint(0,number_of_valid_minions) for i in range(batch_size)]

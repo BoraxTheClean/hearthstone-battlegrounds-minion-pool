@@ -56,6 +56,7 @@ class MinionSet(MinionPoolInterface):
         minions_to_return = []
 
         while len(minions_to_return) != batch_size:
+            print(self.size())
             element = self.pool.pop()
             if int(element[0]) <= tavern_tier:
                 minions_to_return.append(element)
